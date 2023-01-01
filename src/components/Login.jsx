@@ -2,14 +2,35 @@ import { Button, TextField, Paper } from "@mui/material"
 import { green } from "@mui/material/colors"
 import { useState } from "react"
 import "../styles/Login.css"
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth"
+import { useNavigate } from "react-router-dom"
 
-const Login = ({ login, register }) => {
+const Login = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
-  const callback = () => {
-    console.log(username)
-    console.log(password)
+  const authentication = getAuth()
+  const navigate = useNavigate()
+
+  const handleLogin = () => {
+    console.log(`login with: ${username} : ${password}`)
+    navigate("/home")
+  }
+
+  const handleRegistration = () => {
+    console.log(`register with: ${username} : ${password}`)
+    createUserWithEmailAndPassword(authentication, username, password).then(
+      (res) => {
+        console.log(res)
+        navigate("/home")
+        // Toast with the sucessful response
+        sessionStorage.setItem("AuthToken", res._tokenResponse.refreshToken)
+      }
+    )
   }
 
   return (
@@ -45,7 +66,7 @@ const Login = ({ login, register }) => {
           className="submit"
           variant="contained"
           size="large"
-          onClick={() => register(username, password)}
+          onClick={() => handleRegistration()}
           sx={{
             margin: 1,
             width: 150,
@@ -58,7 +79,7 @@ const Login = ({ login, register }) => {
           className="submit"
           variant="contained"
           size="large"
-          onClick={() => login(username, password)}
+          onClick={() => handleLogin()}
           sx={{
             margin: 1,
             width: 150,
