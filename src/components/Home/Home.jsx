@@ -1,7 +1,17 @@
 import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 const Home = () => {
-  useEffect(() => {}, [])
+  let token
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    token = sessionStorage.getItem("AuthToken")
+    if (!token) {
+      console.log("here")
+      navigate("/")
+    }
+  }, [])
 
   return (
     <div>

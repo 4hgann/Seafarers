@@ -1,6 +1,6 @@
 import { Button, TextField, Paper } from "@mui/material"
 import { green } from "@mui/material/colors"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import "../styles/Login.css"
 import {
   getAuth,
@@ -8,6 +8,7 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
+import { app } from "../Firebase/FirebaseConfig"
 
 const Login = () => {
   const [username, setUsername] = useState("")
@@ -16,11 +17,27 @@ const Login = () => {
   const authentication = getAuth()
   const navigate = useNavigate()
 
+  useEffect(() => {
+    const token = sessionStorage.getItem("AuthToken")
+    if (token) {
+      console.log("here2")
+      navigate("/home")
+    }
+  }, [])
+
+  // Will attempt to login with provided credentials
   const handleLogin = () => {
     console.log(`login with: ${username} : ${password}`)
-    navigate("/home")
+    signInWithEmailAndPassword(authentication, username, password)
+      .then((res) => {
+        console.log(res)
+        //Toast
+        sessionStorage.setItem("AuthToken", res._tokenResponse.refreshToken)
+      })
+      .then(() => navigate("/home"))
   }
 
+  // Will request to create a user with provided credentials
   const handleRegistration = () => {
     console.log(`register with: ${username} : ${password}`)
     createUserWithEmailAndPassword(authentication, username, password).then(
