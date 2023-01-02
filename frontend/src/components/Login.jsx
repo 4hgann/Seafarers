@@ -2,19 +2,12 @@ import { Button, TextField, Paper } from "@mui/material"
 import { green } from "@mui/material/colors"
 import { useState, useEffect } from "react"
 import "../styles/Login.css"
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from "firebase/auth"
 import { useNavigate } from "react-router-dom"
-import { app } from "../Firebase/FirebaseConfig"
 
 const Login = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
-  const authentication = getAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -26,28 +19,24 @@ const Login = () => {
   }, [])
 
   // Will attempt to login with provided credentials
-  const handleLogin = () => {
+  const handleAuth = (url) => {
     console.log(`login with: ${username} : ${password}`)
-    signInWithEmailAndPassword(authentication, username, password)
+    console.log(JSON.stringify({ username, password }))
+    const options = {
+      method: "POST",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    }
+    fetch(url, options)
+      .then((res) => res.json())
       .then((res) => {
         console.log(res)
-        //Toast
-        sessionStorage.setItem("AuthToken", res._tokenResponse.refreshToken)
-      })
-      .then(() => navigate("/home"))
-  }
-
-  // Will request to create a user with provided credentials
-  const handleRegistration = () => {
-    console.log(`register with: ${username} : ${password}`)
-    createUserWithEmailAndPassword(authentication, username, password).then(
-      (res) => {
-        console.log(res)
+        sessionStorage.setItem("AuthToken", res.token)
         navigate("/home")
-        // Toast with the sucessful response
-        sessionStorage.setItem("AuthToken", res._tokenResponse.refreshToken)
-      }
-    )
+      })
   }
 
   return (
@@ -83,7 +72,7 @@ const Login = () => {
           className="submit"
           variant="contained"
           size="large"
-          onClick={() => handleRegistration()}
+          onClick={() => handleAuth("/api/register")}
           sx={{
             margin: 1,
             width: 150,
@@ -96,7 +85,7 @@ const Login = () => {
           className="submit"
           variant="contained"
           size="large"
-          onClick={() => handleLogin()}
+          onClick={() => handleAuth("/api/login")}
           sx={{
             margin: 1,
             width: 150,

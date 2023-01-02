@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app"
 
-import FirebaseToken from "../Tokens/FirebaseToken"
+import FirebaseToken from "../Tokens/FirebaseToken.js"
 
 const firebaseConfig = {
   apiKey: FirebaseToken,
