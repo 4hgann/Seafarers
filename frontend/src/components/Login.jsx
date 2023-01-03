@@ -13,7 +13,8 @@ const Login = () => {
   // Redirects from login to home page if the user has an auth token in session storage
   useEffect(() => {
     const token = sessionStorage.getItem("AuthToken")
-    if (token) {
+    const id = sessionStorage.getItem("LocalID")
+    if (token != null && id != null) {
       navigate("/home")
     }
   }, [])
@@ -21,7 +22,6 @@ const Login = () => {
   // Will attempt to login with provided credentials
   const handleAuth = (url) => {
     console.log(`login with: ${username} : ${password}`)
-    console.log(JSON.stringify({ username, password }))
     const options = {
       method: "POST",
       headers: {
@@ -35,6 +35,7 @@ const Login = () => {
       .then((res) => {
         console.log(res)
         sessionStorage.setItem("AuthToken", res.token)
+        sessionStorage.setItem("LocalID", res.id)
         navigate("/home")
       })
   }

@@ -3,7 +3,6 @@ import { getFirestore } from "firebase/firestore"
 import { getAuth } from "firebase/auth"
 
 import FirebaseToken from "../Tokens/FirebaseToken.js"
-import FirestoreServiceAccount from "../Tokens/FirestoreServiceAccount.js"
 
 const firebaseConfig = {
   apiKey: FirebaseToken,

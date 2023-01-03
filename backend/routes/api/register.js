@@ -7,15 +7,18 @@ const router = express.Router()
 
 router.post("/", async (req, res) => {
   console.log(req.body)
-  const token = await createUserWithEmailAndPassword(
+  const data = await createUserWithEmailAndPassword(
     auth,
     req.body.username,
     req.body.password
   ).then((res) => {
     console.log(res)
-    return res._tokenResponse.refreshToken
+    return {
+      token: res._tokenResponse.refreshToken,
+      id: res._tokenResponse.localId,
+    }
   })
-  res.status(200).json({ token: token })
+  res.status(200).json(data)
 })
 
 export default router
