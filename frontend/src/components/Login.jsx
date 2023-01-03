@@ -10,10 +10,10 @@ const Login = () => {
 
   const navigate = useNavigate()
 
+  // Redirects from login to home page if the user has an auth token in session storage
   useEffect(() => {
     const token = sessionStorage.getItem("AuthToken")
     if (token) {
-      console.log("here2")
       navigate("/home")
     }
   }, [])

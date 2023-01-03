@@ -1,16 +1,16 @@
 import express from "express"
-import { app } from "../../Firebase/FirebaseConfig.js"
+import { auth } from "../../Firebase/FirebaseConfig.js"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
 
 const router = express.Router()
-const authentication = getAuth()
+//const authentication = getAuth()
 
 router.get("/", (req, res) => res.send("tester"))
 
 router.post("/", async (req, res) => {
   console.log(req.body)
   const token = await signInWithEmailAndPassword(
-    authentication,
+    auth,
     req.body.username,
     req.body.password
   ).then((res) => {
