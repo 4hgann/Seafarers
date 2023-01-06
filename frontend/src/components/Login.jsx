@@ -31,12 +31,20 @@ const Login = () => {
       body: JSON.stringify({ username, password }),
     }
     fetch(url, options)
-      .then((res) => res.json())
+      .then(async (res) => {
+        const data = await res.json()
+        return { ...data, ok: res.ok }
+      })
       .then((res) => {
         console.log(res)
-        sessionStorage.setItem("AuthToken", res.token)
-        sessionStorage.setItem("LocalID", res.id)
-        navigate("/home")
+        if (res.ok) {
+          sessionStorage.setItem("AuthToken", res.token)
+          sessionStorage.setItem("LocalID", res.id)
+          navigate("/home")
+        } else {
+          // Convert this to toast
+          console.log(res.ErrorMessage)
+        }
       })
   }
 

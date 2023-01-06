@@ -25,12 +25,12 @@ router.post("/", async (req, res) => {
     })
     .catch((err) => {
       let errorMessage
-      if ("auth/weak-password" in ErrorMessageMap) {
+      if (err.code in ErrorMessageMap) {
         errorMessage = ErrorMessageMap[err.code]
       } else {
         errorMessage = "There was a problem completing your request"
       }
-      res.status(StatusCodes.BAD_REQUEST).json({ ErrorMesage: errorMessage })
+      res.status(StatusCodes.BAD_REQUEST).json({ ErrorMessage: errorMessage })
     })
 })
 
