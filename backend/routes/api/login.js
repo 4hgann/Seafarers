@@ -1,26 +1,29 @@
 import express from "express"
-import { auth } from "../../Firebase/FirebaseConfig.js"
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import { auth, db } from "../../Firebase/FirebaseConfig.js"
+
+import { signInWithEmailAndPassword } from "firebase/auth"
+import { StatusCodes } from "http-status-codes"
+import ErrorMessageMap from "../../Firebase/ErrorMessageMap.js"
 
 const router = express.Router()
-//const authentication = getAuth()
-
-router.get("/", (req, res) => res.send("tester"))
 
 router.post("/", async (req, res) => {
-  console.log(req.body)
-  const data = await signInWithEmailAndPassword(
-    auth,
-    req.body.username,
-    req.body.password
-  ).then((res) => {
-    console.log(res)
-    return {
-      token: res._tokenResponse.refreshToken,
-      id: res._tokenResponse.localId,
-    }
-  })
-  res.status(200).json(data)
+  await signInWithEmailAndPassword(auth, req.body.username, req.body.password)
+    .then((authRes) => {
+      res.status(200).json({
+        token: authRes._tokenResponse.refreshToken,
+        id: authRes._tokenResponse.localId,
+      })
+    })
+    .catch((err) => {
+      let errorMessage
+      if ("auth/weak-password" in ErrorMessageMap) {
+        errorMessage = ErrorMessageMap[err.code]
+      } else {
+        errorMessage = "There was a problem completing your request"
+      }
+      res.status(StatusCodes.BAD_REQUEST).json({ ErrorMesage: errorMessage })
+    })
 })
 
 export default router

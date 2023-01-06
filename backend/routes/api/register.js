@@ -1,24 +1,37 @@
 import express from "express"
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"
-import { auth } from "../../Firebase/FirebaseConfig.js"
+import { createUserWithEmailAndPassword } from "firebase/auth"
+import { auth, db } from "../../Firebase/FirebaseConfig.js"
+import { doc, setDoc } from "firebase/firestore"
+import { StatusCodes } from "http-status-codes"
+import ErrorMessageMap from "../../Firebase/ErrorMessageMap.js"
 
 const router = express.Router()
-//const authentication = getAuth()
 
 router.post("/", async (req, res) => {
   console.log(req.body)
-  const data = await createUserWithEmailAndPassword(
+  await createUserWithEmailAndPassword(
     auth,
     req.body.username,
     req.body.password
-  ).then((res) => {
-    console.log(res)
-    return {
-      token: res._tokenResponse.refreshToken,
-      id: res._tokenResponse.localId,
-    }
-  })
-  res.status(200).json(data)
+  )
+    .then(async (authRes) => {
+      const docRef = doc(db, "user-items", authRes._tokenResponse.localId)
+      await setDoc(docRef, { items: [] })
+      const data = {
+        token: authRes._tokenResponse.refreshToken,
+        id: authRes._tokenResponse.localId,
+      }
+      res.status(200).json(data)
+    })
+    .catch((err) => {
+      let errorMessage
+      if ("auth/weak-password" in ErrorMessageMap) {
+        errorMessage = ErrorMessageMap[err.code]
+      } else {
+        errorMessage = "There was a problem completing your request"
+      }
+      res.status(StatusCodes.BAD_REQUEST).json({ ErrorMesage: errorMessage })
+    })
 })
 
 export default router

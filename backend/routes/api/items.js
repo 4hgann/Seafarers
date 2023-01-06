@@ -1,5 +1,6 @@
 import express from "express"
 import crypto from "crypto"
+import { StatusCodes } from "http-status-codes"
 import {
   doc,
   getDoc,
@@ -16,47 +17,66 @@ import { db } from "../../Firebase/FirebaseConfig.js"
 const router = express.Router()
 
 router.get("/", async (req, res) => {
-  const items = await getItems(req.query.id)
-  res.status(200).json(items)
+  if (!req.query.id) {
+    res.sendStatus(StatusCodes.BAD_REQUEST)
+  } else {
+    const items = await getItems(req.query.id)
+    res.status(StatusCodes.OK).json(items)
+  }
 })
 
 router.post("/", async (req, res) => {
-  const docRef = doc(db, "user-items", req.query.id)
-  const newItem = {
-    _id: crypto.randomUUID(),
-    name: "tester",
-    x: 2,
-    y: 4,
-    z: 5,
-    mass: 10,
+  if (!req.body.item || !req.query.id) {
+    res.sendStatus(StatusCodes.BAD_REQUEST)
+  } else {
+    const item = req.body.item
+    const docRef = doc(db, "user-items", req.query.id)
+
+    const newItem = {
+      _id: crypto.randomUUID(),
+      ...item,
+    }
+
+    await updateDoc(docRef, { items: arrayUnion(newItem) })
+    res.sendStatus(StatusCodes.CREATED)
   }
-  await updateDoc(docRef, { items: arrayUnion(newItem) })
-  res.status(200).json("Success")
 })
 
 router.put("/", async (req, res) => {
-  const docRef = doc(db, "user-items", req.query.id)
-  const items = await getItems(req.query.id)
-  const index = items.findIndex(
-    (x) => x._id === "3243984a-d065-4a6e-aeaa-0628ba733a6d"
-  )
-  items[index].name = "putTest"
-  await updateDoc(docRef, { items: items })
-  res.status(200).json(crypto.randomUUID())
+  const item = req.body.item
+  const id = req.query.id
+
+  const docRef = doc(db, "user-items", id)
+  const items = await getItems(id)
+
+  const index = items.findIndex((x) => x._id === item._id)
+  if (index === -1) {
+    res.sendStatus(StatusCodes.NOT_FOUND)
+  } else {
+    items[index].name = "putTest"
+    await updateDoc(docRef, { items: items })
+    res.sendStatus(StatusCodes.NO_CONTENT)
+  }
 })
 
 // If an item is supplied in the DELETE, remove that item, otherwise purge the document
 router.delete("/", async (req, res) => {
-  const docRef = doc(db, "user-items", req.query.id)
-  console.log(req.body.item)
-  console.log(typeof req.body.item)
-  if (req.body.item) {
-    console.log("removing")
-    await updateDoc(docRef, { items: arrayRemove(req.body.item) })
-    res.send(200)
+  const item = req.body.item
+  const id = req.query.id
+  const docRef = doc(db, "user-items", id)
+  if (item) {
+    const isExisting = await itemExists(id, item)
+    if (isExisting) {
+      const test = await updateDoc(docRef, {
+        items: arrayRemove(req.body.item),
+      })
+      res.sendStatus(StatusCodes.NO_CONTENT)
+    } else {
+      res.sendStatus(StatusCodes.NOT_FOUND)
+    }
   } else {
     await updateDoc(docRef, { items: [] })
-    res.send(200)
+    res.sendStatus(StatusCodes.NO_CONTENT)
   }
 })
 
@@ -64,6 +84,15 @@ const getItems = async (id) => {
   const docRef = doc(db, "user-items", id)
   const docSnap = await getDoc(docRef)
   return docSnap.data().items
+}
+
+// Check an item exists in collection
+const itemExists = async (id, item) => {
+  const items = await getItems(id)
+  if (items.findIndex((x) => x._id === item._id) != -1) {
+    return true
+  }
+  return false
 }
 
 export default router
