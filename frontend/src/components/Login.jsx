@@ -56,75 +56,80 @@ const Login = () => {
   }
 
   return (
-    <Container component="main">
-      <Box
-        sx={{
-          my: "25vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Paper elevation={10} sx={{ minHeight: "50vh" }}>
-          <Container sx={{ py: "10px", textAlign: "center" }}>
-            <Typography variant="h3">Seafarers</Typography>
-          </Container>
-          <Container
-            sx={{ display: "flex", flexDirection: "column", pt: "30px" }}
-          >
-            <TextField
-              label="Username"
-              variant="outlined"
-              sx={{
-                margin: 1,
-                maxWidth: "sm",
-              }}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <TextField
-              label="Password"
-              variant="outlined"
-              sx={{
-                margin: 1,
-                maxWidth: "sm",
-              }}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Container>
-          <Container sx={{ display: "flex" }}>
-            <Button
-              className="submit"
-              variant="contained"
-              size="large"
-              onClick={() => handleAuth("/api/register")}
-              sx={{
-                margin: 1,
-                width: 150,
-              }}
+    <div className="background">
+      <Container sx={{ minWidth: "100%", minHeight: "100%" }}>
+        <Box
+          sx={{
+            py: "25vh",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Paper elevation={10} sx={{ minHeight: "100%" }}>
+            <Container sx={{ pt: "20px", pb: 0, textAlign: "center" }}>
+              <Typography variant="h3">Seafarers</Typography>
+            </Container>
+            <Container
+              sx={{ display: "flex", flexDirection: "column", mt: "25px" }}
             >
-              Register
-            </Button>
+              <TextField
+                label="Username"
+                variant="outlined"
+                sx={{
+                  mx: 1,
+                  my: 2,
+                  maxWidth: "sm",
+                }}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <TextField
+                label="Password"
+                variant="outlined"
+                sx={{
+                  mx: 1,
+                  my: 2,
+                  maxWidth: "sm",
+                }}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Container>
+            <Container sx={{ display: "flex", my: 3 }}>
+              <Button
+                className="submit"
+                variant="contained"
+                size="large"
+                onClick={() => handleAuth("/api/register")}
+                sx={{
+                  margin: 1,
+                  width: 150,
+                  py: 2,
+                }}
+              >
+                Register
+              </Button>
 
-            <Button
-              className="submit"
-              variant="contained"
-              size="large"
-              onClick={() => handleAuth("/api/login")}
-              sx={{
-                margin: 1,
-                width: 150,
-                backgroundColor: "green",
-                ":hover": { backgroundColor: "darkGreen" },
-              }}
-            >
-              Login
-            </Button>
-          </Container>
-        </Paper>
-      </Box>
-    </Container>
+              <Button
+                className="submit"
+                variant="contained"
+                size="large"
+                onClick={() => handleAuth("/api/login")}
+                sx={{
+                  margin: 1,
+                  width: 150,
+                  backgroundColor: "green",
+                  ":hover": { backgroundColor: "darkGreen" },
+                }}
+              >
+                Login
+              </Button>
+            </Container>
+          </Paper>
+        </Box>
+      </Container>
+    </div>
   )
 }
 
