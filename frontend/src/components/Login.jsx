@@ -1,4 +1,11 @@
-import { Button, TextField, Paper } from "@mui/material"
+import {
+  Button,
+  TextField,
+  Container,
+  Paper,
+  Typography,
+  Box,
+} from "@mui/material"
 import { green } from "@mui/material/colors"
 import { useState, useEffect } from "react"
 import "../styles/Login.css"
@@ -49,62 +56,75 @@ const Login = () => {
   }
 
   return (
-    <Paper className="login-window" elevation={4} sx={{ borderRadius: 4 }}>
-      <div>
-        <p className="test">Seafarers</p>
-      </div>
-      <p className="heading">Login or Register</p>
-      <div className="fields">
-        <TextField
-          className="field"
-          label="Username"
-          variant="outlined"
-          sx={{
-            margin: 1,
-          }}
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <TextField
-          className="field"
-          label="Password"
-          variant="outlined"
-          sx={{
-            margin: 1,
-          }}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <div className="buttons">
-        <Button
-          className="submit"
-          variant="contained"
-          size="large"
-          onClick={() => handleAuth("/api/register")}
-          sx={{
-            margin: 1,
-            width: 150,
-          }}
-        >
-          Register
-        </Button>
+    <Container component="main">
+      <Box
+        sx={{
+          my: "25vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Paper elevation={10} sx={{ minHeight: "50vh" }}>
+          <Container sx={{ py: "10px", textAlign: "center" }}>
+            <Typography variant="h3">Seafarers</Typography>
+          </Container>
+          <Container
+            sx={{ display: "flex", flexDirection: "column", pt: "30px" }}
+          >
+            <TextField
+              label="Username"
+              variant="outlined"
+              sx={{
+                margin: 1,
+                maxWidth: "sm",
+              }}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <TextField
+              label="Password"
+              variant="outlined"
+              sx={{
+                margin: 1,
+                maxWidth: "sm",
+              }}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </Container>
+          <Container sx={{ display: "flex" }}>
+            <Button
+              className="submit"
+              variant="contained"
+              size="large"
+              onClick={() => handleAuth("/api/register")}
+              sx={{
+                margin: 1,
+                width: 150,
+              }}
+            >
+              Register
+            </Button>
 
-        <Button
-          className="submit"
-          variant="contained"
-          size="large"
-          onClick={() => handleAuth("/api/login")}
-          sx={{
-            margin: 1,
-            width: 150,
-            backgroundColor: "green",
-          }}
-        >
-          Login
-        </Button>
-      </div>
-    </Paper>
+            <Button
+              className="submit"
+              variant="contained"
+              size="large"
+              onClick={() => handleAuth("/api/login")}
+              sx={{
+                margin: 1,
+                width: 150,
+                backgroundColor: "green",
+                ":hover": { backgroundColor: "darkGreen" },
+              }}
+            >
+              Login
+            </Button>
+          </Container>
+        </Paper>
+      </Box>
+    </Container>
   )
 }
 
