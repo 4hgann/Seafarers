@@ -11,33 +11,34 @@ import EditIcon from "@mui/icons-material/Edit"
 import { useState } from "react"
 import { TextField } from "@mui/material"
 
-const createData = (name, calories, fat, carbs, protein) => {
-  return { name, calories, fat, carbs, protein }
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-]
-
 const ComponentTable = ({ data }) => {
-  const [currentlyEditing, setCurrentlyEditing] = useState("1")
+  const [currentlyEditing, setCurrentlyEditing] = useState(null)
+  const headings = ["Component Name", "Mass", "X", "Y", "Z", "Edit", "Delete"]
   const fields = ["name", "mass", "x", "y", "z"]
+
+  const copy = [...data]
+  // console.log(copy)
+
+  const handleEdit = (id, field, value) => {
+    console.log(id, field, value)
+    const row = copy.find((item) => item._id === id)
+    row[field] = value
+    console.log(copy)
+  }
+
+  const submitEdit = (id) => {
+    console.log(copy.find((item) => item._id === id))
+    setCurrentlyEditing(null)
+  }
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="center">Component Name</TableCell>
-            <TableCell align="center">Mass</TableCell>
-            <TableCell align="center">X</TableCell>
-            <TableCell align="center">Y</TableCell>
-            <TableCell align="center">Z</TableCell>
-            <TableCell align="center">Edit</TableCell>
-            <TableCell align="center">Delete</TableCell>
+            {headings.map((heading) => {
+              return <TableCell align="center">{heading}</TableCell>
+            })}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -51,7 +52,12 @@ const ComponentTable = ({ data }) => {
                   {fields.map((field) => {
                     return (
                       <TableCell align="center" sx={{ width: "14%" }}>
-                        <TextField value={row[field]} />
+                        <TextField
+                          value={row[field]}
+                          onChange={(e) =>
+                            handleEdit(row._id, field, e.target.value)
+                          }
+                        />
                       </TableCell>
                     )
                   })}
@@ -71,7 +77,7 @@ const ComponentTable = ({ data }) => {
                 <EditIcon onClick={() => setCurrentlyEditing(row._id)} />
               </TableCell>
               <TableCell align="center">
-                <DeleteIcon onClick={() => setCurrentlyEditing("1")} />
+                <DeleteIcon onClick={() => submitEdit(row._id)} />
               </TableCell>
             </TableRow>
           ))}
