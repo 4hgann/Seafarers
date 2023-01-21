@@ -5,6 +5,11 @@ import TableContainer from "@mui/material/TableContainer"
 import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import Paper from "@mui/material/Paper"
+import CheckIcon from "@mui/icons-material/Check"
+import DeleteIcon from "@mui/icons-material/Delete"
+import EditIcon from "@mui/icons-material/Edit"
+import { useState } from "react"
+import { TextField } from "@mui/material"
 
 const createData = (name, calories, fat, carbs, protein) => {
   return { name, calories, fat, carbs, protein }
@@ -19,31 +24,55 @@ const rows = [
 ]
 
 const ComponentTable = ({ data }) => {
+  const [currentlyEditing, setCurrentlyEditing] = useState("1")
+  const fields = ["name", "mass", "x", "y", "z"]
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Component Name</TableCell>
-            <TableCell>Mass</TableCell>
-            <TableCell>X</TableCell>
-            <TableCell>Y</TableCell>
-            <TableCell>Z</TableCell>
+            <TableCell align="center">Component Name</TableCell>
+            <TableCell align="center">Mass</TableCell>
+            <TableCell align="center">X</TableCell>
+            <TableCell align="center">Y</TableCell>
+            <TableCell align="center">Z</TableCell>
+            <TableCell align="center">Edit</TableCell>
+            <TableCell align="center">Delete</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {data.map((row) => (
             <TableRow
-              key={row.name}
+              key={row._id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-              <TableCell component="th" scope="row">
-                {row.name}
+              {row._id === currentlyEditing ? (
+                <>
+                  {fields.map((field) => {
+                    return (
+                      <TableCell align="center" sx={{ width: "14%" }}>
+                        <TextField value={row[field]} />
+                      </TableCell>
+                    )
+                  })}
+                </>
+              ) : (
+                <>
+                  {fields.map((field) => {
+                    return (
+                      <TableCell align="center" sx={{ width: "14%" }}>
+                        {row[field]}
+                      </TableCell>
+                    )
+                  })}
+                </>
+              )}
+              <TableCell align="center">
+                <EditIcon onClick={() => setCurrentlyEditing(row._id)} />
               </TableCell>
-              <TableCell>{row.mass}</TableCell>
-              <TableCell>{row.x}</TableCell>
-              <TableCell>{row.y}</TableCell>
-              <TableCell>{row.z}</TableCell>
+              <TableCell align="center">
+                <DeleteIcon onClick={() => setCurrentlyEditing("1")} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
