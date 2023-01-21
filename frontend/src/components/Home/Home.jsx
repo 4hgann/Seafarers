@@ -1,6 +1,8 @@
 import { Button } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import "../../styles/Home.css"
+import ComponentTable from "./Table"
 
 const Home = () => {
   const navigate = useNavigate()
@@ -18,6 +20,7 @@ const Home = () => {
       fetch(`/api/items?id=${id}`)
         .then((res) => res.json())
         .then((res) => setItems(res))
+        .then()
     }
   }, [])
 
@@ -28,11 +31,12 @@ const Home = () => {
   }
 
   return (
-    <div>
-      <p>Home page </p>
+    <div className="background">
+      <p style={{ marginTop: 0 }}>Home page </p>
       {items.map((item) => {
         return <p>{item.name}</p>
       })}
+      <ComponentTable data={items} />
       <Button onClick={() => logoutHandler()}>Logout</Button>
     </div>
   )
