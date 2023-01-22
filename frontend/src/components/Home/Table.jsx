@@ -10,25 +10,57 @@ import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import { useState } from "react"
 import { TextField } from "@mui/material"
+import { toast } from "react-toastify"
 
 const ComponentTable = ({ data }) => {
   const [currentlyEditing, setCurrentlyEditing] = useState(null)
+
+  const [copy, setCopy] = useState([...data])
+  console.log(copy)
+  console.log(data)
+
   const headings = ["Component Name", "Mass", "X", "Y", "Z", "Edit", "Delete"]
   const fields = ["name", "mass", "x", "y", "z"]
 
-  const copy = [...data]
-  // console.log(copy)
-
+  // Edits a temporary copy before submitting
   const handleEdit = (id, field, value) => {
     console.log(id, field, value)
-    const row = copy.find((item) => item._id === id)
-    row[field] = value
-    console.log(copy)
+    const rowIndex = copy.findIndex((item) => item._id === id)
+    const newRow = copy[rowIndex]
+    newRow[field] = value
+    const newCopy = [...copy]
+    newCopy[rowIndex] = newRow
+    console.log(newCopy)
+    setCopy(newCopy)
   }
 
   const submitEdit = (id) => {
-    console.log(copy.find((item) => item._id === id))
-    setCurrentlyEditing(null)
+    const currentItem = copy.find((item) => item._id === id)
+    try {
+      currentItem.name = String(currentItem.name)
+      currentItem.mass = Number(currentItem.mass)
+      currentItem.x = Number(currentItem.x)
+      currentItem.y = Number(currentItem.y)
+      currentItem.z = Number(currentItem.z)
+
+      console.log(currentItem.mass)
+      console.log(isNaN(currentItem))
+      if (
+        isNaN(currentItem.mass) ||
+        isNaN(currentItem.x) ||
+        isNaN(currentItem.y) ||
+        isNaN(currentItem.z)
+      ) {
+        console.log("error throwing")
+        throw new Error(
+          "Funny guy, you put the wrong data type in one of the fields, oi"
+        )
+      } else {
+        setCurrentlyEditing(null)
+      }
+    } catch (e) {
+      toast.error(e.message)
+    }
   }
 
   return (
@@ -50,10 +82,12 @@ const ComponentTable = ({ data }) => {
               {row._id === currentlyEditing ? (
                 <>
                   {fields.map((field) => {
+                    const copyRow = copy.find((item) => item._id === row._id)
+                    console.log(copy)
                     return (
                       <TableCell align="center" sx={{ width: "14%" }}>
                         <TextField
-                          value={row[field]}
+                          value={copyRow[field]}
                           onChange={(e) =>
                             handleEdit(row._id, field, e.target.value)
                           }

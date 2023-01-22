@@ -69,87 +69,79 @@ const Login = () => {
   }
 
   return (
-    <div className="background">
-      <ToastContainer />
-      <Container sx={{ minWidth: "100%", minHeight: "100%" }}>
-        <Box
-          sx={{
-            py: "25vh",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Paper
-            elevation={10}
+    <div className="background centered">
+      <ToastContainer style={{ width: "500px", textAlign: "center" }} />
+      <Container
+        sx={{
+          width: "25%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
+        <Paper elevation={10} sx={{ minHeight: "50vh" }}>
+          <Container sx={{ pt: "20px", pb: 0, textAlign: "center" }}>
+            <Typography variant="h3">Seafarers</Typography>
+          </Container>
+          <Container
+            sx={{ display: "flex", flexDirection: "column", mt: "25px" }}
+          >
+            <TextField
+              label="Username"
+              variant="outlined"
+              sx={{
+                my: 2,
+              }}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <TextField
+              label="Password"
+              variant="outlined"
+              sx={{
+                my: 2,
+              }}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </Container>
+          <Container
             sx={{
-              minHeight: "100%",
               display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              my: 3,
             }}
           >
-            <Container sx={{ pt: "20px", pb: 0, textAlign: "center" }}>
-              <Typography variant="h3">Seafarers</Typography>
-            </Container>
-            <Container
-              sx={{ display: "flex", flexDirection: "column", mt: "25px" }}
+            <Button
+              className="submit"
+              variant="contained"
+              size="large"
+              onClick={() => handleAuth("/api/register")}
+              sx={{
+                width: "45%",
+                py: 2,
+              }}
             >
-              <TextField
-                label="Username"
-                variant="outlined"
-                sx={{
-                  mx: 1,
-                  my: 2,
-                  maxWidth: "sm",
-                }}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <TextField
-                label="Password"
-                variant="outlined"
-                sx={{
-                  mx: 1,
-                  my: 2,
-                  maxWidth: "sm",
-                }}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Container>
-            <Container sx={{ display: "flex", my: 3 }}>
-              <Button
-                className="submit"
-                variant="contained"
-                size="large"
-                onClick={() => handleAuth("/api/register")}
-                sx={{
-                  margin: 1,
-                  width: 150,
-                  py: 2,
-                }}
-              >
-                Register
-              </Button>
+              Register
+            </Button>
 
-              <Button
-                className="submit"
-                variant="contained"
-                size="large"
-                onClick={() => handleAuth("/api/login")}
-                sx={{
-                  margin: 1,
-                  width: 150,
-                  backgroundColor: "green",
-                  ":hover": { backgroundColor: "darkGreen" },
-                }}
-              >
-                Login
-              </Button>
-            </Container>
-          </Paper>
-        </Box>
+            <Button
+              className="submit"
+              variant="contained"
+              size="large"
+              onClick={() => handleAuth("/api/login")}
+              sx={{
+                width: "45%",
+                backgroundColor: "green",
+                ":hover": { backgroundColor: "darkGreen" },
+              }}
+            >
+              Login
+            </Button>
+          </Container>
+        </Paper>
       </Container>
     </div>
   )
