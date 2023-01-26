@@ -26,14 +26,45 @@ const Home = () => {
     token = sessionStorage.getItem("AuthToken")
     id = sessionStorage.getItem("LocalID")
     if (token === null || !id === null) {
-      console.log("here")
       navigate("/")
     } else {
-      fetch(`/api/items?id=${id}`)
-        .then((res) => res.json())
-        .then((res) => setItems(res))
+      getItems()
     }
   }, [])
+
+  const getItems = () => {
+    id = sessionStorage.getItem("LocalID")
+    fetch(`/api/items?id=${id}`)
+      .then((res) => res.json())
+      .then((res) => setItems(res))
+  }
+
+  const putRequest = async (item, id) => {
+    const options = {
+      method: "PUT",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ item }),
+    }
+
+    const result = await fetch(`/api/items?id=${id}`, options).then(
+      async (res) => {
+        if (res.ok) {
+          const newItems = [...items]
+          const index = newItems.findIndex(
+            (newItem) => newItem._id === item._id
+          )
+          newItems[index] = item
+          setItems([...newItems])
+          //getItems()
+          return true
+        }
+        return false
+      }
+    )
+    return result
+  }
 
   const logoutHandler = () => {
     sessionStorage.removeItem("AuthToken")
@@ -48,7 +79,9 @@ const Home = () => {
       {items.map((item) => {
         return <p>{item.name}</p>
       })}
-      {items.length > 0 && <ComponentTable data={items} />}
+      {items.length > 0 && (
+        <ComponentTable data={items} updateItem={putRequest} />
+      )}
       <Button onClick={() => logoutHandler()}>Logout</Button>
     </div>
   )

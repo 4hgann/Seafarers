@@ -8,33 +8,40 @@ import Paper from "@mui/material/Paper"
 import CheckIcon from "@mui/icons-material/Check"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { TextField } from "@mui/material"
 import { toast } from "react-toastify"
 
-const ComponentTable = ({ data }) => {
+const ComponentTable = ({ data, updateItem }) => {
   const [currentlyEditing, setCurrentlyEditing] = useState(null)
-
   const [copy, setCopy] = useState([...data])
-  console.log(copy)
-  console.log(data)
+
+  const userId = sessionStorage.getItem("LocalID")
 
   const headings = ["Component Name", "Mass", "X", "Y", "Z", "Edit", "Delete"]
   const fields = ["name", "mass", "x", "y", "z"]
 
   // Edits a temporary copy before submitting
   const handleEdit = (id, field, value) => {
-    console.log(id, field, value)
-    const rowIndex = copy.findIndex((item) => item._id === id)
-    const newRow = copy[rowIndex]
-    newRow[field] = value
-    const newCopy = [...copy]
-    newCopy[rowIndex] = newRow
-    console.log(newCopy)
-    setCopy(newCopy)
+    setCopy(
+      copy.map((item) => {
+        if (item._id === id) {
+          const newItem = { ...item }
+          newItem[field] = value
+          return newItem
+        } else {
+          return item
+        }
+      })
+    )
   }
 
-  const submitEdit = (id) => {
+  const submitEdit = async (id) => {
+    if (JSON.stringify(data) === JSON.stringify(copy)) {
+      console.log("ping")
+      setCurrentlyEditing(null)
+      return
+    }
     const currentItem = copy.find((item) => item._id === id)
     try {
       currentItem.name = String(currentItem.name)
@@ -42,20 +49,23 @@ const ComponentTable = ({ data }) => {
       currentItem.x = Number(currentItem.x)
       currentItem.y = Number(currentItem.y)
       currentItem.z = Number(currentItem.z)
-
-      console.log(currentItem.mass)
-      console.log(isNaN(currentItem))
       if (
         isNaN(currentItem.mass) ||
         isNaN(currentItem.x) ||
         isNaN(currentItem.y) ||
         isNaN(currentItem.z)
       ) {
-        console.log("error throwing")
         throw new Error(
           "Funny guy, you put the wrong data type in one of the fields, oi"
         )
       } else {
+        const isSuccess = await updateItem(currentItem, userId)
+        if (!isSuccess) {
+          throw new Error(
+            "There was a problem completing your update request at this time. Try again later."
+          )
+        }
+        toast.success("Item successfully updated")
         setCurrentlyEditing(null)
       }
     } catch (e) {
@@ -74,7 +84,7 @@ const ComponentTable = ({ data }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row) => (
+          {copy.map((row) => (
             <TableRow
               key={row._id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -83,7 +93,6 @@ const ComponentTable = ({ data }) => {
                 <>
                   {fields.map((field) => {
                     const copyRow = copy.find((item) => item._id === row._id)
-                    console.log(copy)
                     return (
                       <TableCell align="center" sx={{ width: "14%" }}>
                         <TextField
@@ -108,7 +117,11 @@ const ComponentTable = ({ data }) => {
                 </>
               )}
               <TableCell align="center">
-                <EditIcon onClick={() => setCurrentlyEditing(row._id)} />
+                {row._id === currentlyEditing ? (
+                  <CheckIcon onClick={() => submitEdit(row._id)} />
+                ) : (
+                  <EditIcon onClick={() => setCurrentlyEditing(row._id)} />
+                )}
               </TableCell>
               <TableCell align="center">
                 <DeleteIcon onClick={() => submitEdit(row._id)} />
