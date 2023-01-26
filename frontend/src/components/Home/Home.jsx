@@ -22,6 +22,8 @@ const Home = () => {
     theme: "dark",
   }
 
+  console.log("items", items)
+
   useEffect(() => {
     token = sessionStorage.getItem("AuthToken")
     id = sessionStorage.getItem("LocalID")
@@ -32,11 +34,33 @@ const Home = () => {
     }
   }, [])
 
-  const getItems = () => {
+  const getItems = async () => {
     id = sessionStorage.getItem("LocalID")
     fetch(`/api/items?id=${id}`)
       .then((res) => res.json())
       .then((res) => setItems(res))
+  }
+
+  const postRequest = async (item, id) => {
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ item }),
+    }
+
+    const result = fetch(`/api/items?id=${id}`, options).then((res) => {
+      if (res.ok) {
+        const newItems = [...items]
+        newItems.push(item)
+        setItems(newItems)
+        return true
+      }
+      return false
+    })
+    await getItems()
+    return result
   }
 
   const putRequest = async (item, id) => {
@@ -51,13 +75,34 @@ const Home = () => {
     const result = await fetch(`/api/items?id=${id}`, options).then(
       async (res) => {
         if (res.ok) {
-          const newItems = [...items]
-          const index = newItems.findIndex(
-            (newItem) => newItem._id === item._id
+          setItems(
+            items.map((row) => {
+              if (item._id === row._id) {
+                return { ...item }
+              }
+              return row
+            })
           )
-          newItems[index] = item
-          setItems([...newItems])
-          //getItems()
+          return true
+        }
+        return false
+      }
+    )
+    return result
+  }
+
+  const deleteRequest = async (item, id) => {
+    const options = {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ item }),
+    }
+    const result = await fetch(`/api/items?id=${id}`, options).then(
+      async (res) => {
+        if (res.ok) {
+          setItems((array) => array.filter((row) => row._id != item._id))
           return true
         }
         return false
@@ -80,9 +125,16 @@ const Home = () => {
         return <p>{item.name}</p>
       })}
       {items.length > 0 && (
-        <ComponentTable data={items} updateItem={putRequest} />
+        <ComponentTable
+          data={items}
+          postItem={postRequest}
+          updateItem={putRequest}
+          deleteItem={deleteRequest}
+        />
       )}
-      <Button onClick={() => logoutHandler()}>Logout</Button>
+      <Button varaint="contained" onClick={() => logoutHandler()}>
+        Logout
+      </Button>
     </div>
   )
 }

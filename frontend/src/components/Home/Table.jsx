@@ -9,18 +9,26 @@ import CheckIcon from "@mui/icons-material/Check"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import { useState, useEffect } from "react"
-import { TextField } from "@mui/material"
+import { Button, Container, TextField } from "@mui/material"
 import { toast } from "react-toastify"
+import PostDialogForm from "./PostDialogForm"
+import validateItem from "../../Util/InputValidation"
 
-const ComponentTable = ({ data, updateItem }) => {
+const ComponentTable = ({ data, postItem, updateItem, deleteItem }) => {
   const [currentlyEditing, setCurrentlyEditing] = useState(null)
   const [copy, setCopy] = useState([...data])
+  const [showDialog, setShowDialog] = useState(false)
 
   const userId = sessionStorage.getItem("LocalID")
 
+  useEffect(() => {
+    setCopy([...data])
+  }, [data])
+
   const headings = ["Component Name", "Mass", "X", "Y", "Z", "Edit", "Delete"]
   const fields = ["name", "mass", "x", "y", "z"]
-
+  const errorString =
+    "There was a problem completing your request at this time. Try again later."
   // Edits a temporary copy before submitting
   const handleEdit = (id, field, value) => {
     setCopy(
@@ -29,47 +37,37 @@ const ComponentTable = ({ data, updateItem }) => {
           const newItem = { ...item }
           newItem[field] = value
           return newItem
-        } else {
-          return item
         }
+        return item
       })
     )
   }
 
   const submitEdit = async (id) => {
     if (JSON.stringify(data) === JSON.stringify(copy)) {
-      console.log("ping")
       setCurrentlyEditing(null)
       return
     }
     const currentItem = copy.find((item) => item._id === id)
-    try {
-      currentItem.name = String(currentItem.name)
-      currentItem.mass = Number(currentItem.mass)
-      currentItem.x = Number(currentItem.x)
-      currentItem.y = Number(currentItem.y)
-      currentItem.z = Number(currentItem.z)
-      if (
-        isNaN(currentItem.mass) ||
-        isNaN(currentItem.x) ||
-        isNaN(currentItem.y) ||
-        isNaN(currentItem.z)
-      ) {
-        throw new Error(
-          "Funny guy, you put the wrong data type in one of the fields, oi"
-        )
+    const isValid = validateItem(currentItem)
+    if (isValid != false) {
+      const isSuccess = await updateItem(currentItem, userId)
+      if (!isSuccess) {
+        toast.error(errorString)
       } else {
-        const isSuccess = await updateItem(currentItem, userId)
-        if (!isSuccess) {
-          throw new Error(
-            "There was a problem completing your update request at this time. Try again later."
-          )
-        }
         toast.success("Item successfully updated")
         setCurrentlyEditing(null)
       }
-    } catch (e) {
-      toast.error(e.message)
+    }
+  }
+
+  const submitDelete = async (item) => {
+    console.log(item)
+    const isSuccess = await deleteItem(item, userId)
+    if (isSuccess) {
+      toast.success("Item sucessfully deleted")
+    } else {
+      toast.error(errorString)
     }
   }
 
@@ -124,12 +122,38 @@ const ComponentTable = ({ data, updateItem }) => {
                 )}
               </TableCell>
               <TableCell align="center">
-                <DeleteIcon onClick={() => submitEdit(row._id)} />
+                <DeleteIcon onClick={() => submitDelete(row)} />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <Container
+        sx={{
+          mx: 0,
+          px: 0,
+          minWidth: "100%",
+          display: "flex",
+          justifyContent: "flex-end",
+          my: 2,
+        }}
+      >
+        <Button
+          variant="contained"
+          sx={{ mx: 2 }}
+          onClick={() => setShowDialog((value) => !value)}
+        >
+          Add Component
+        </Button>
+        <Button variant="contained" color="error" sx={{ mx: 2 }}>
+          Clear All
+        </Button>
+      </Container>
+      <PostDialogForm
+        open={showDialog}
+        setOpen={setShowDialog}
+        postItem={postItem}
+      />
     </TableContainer>
   )
 }
