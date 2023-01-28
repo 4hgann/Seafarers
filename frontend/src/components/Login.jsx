@@ -11,22 +11,13 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import "react-toastify/dist/ReactToastify.css"
 import "../styles/Login.css"
+import ToastOptions from "../Util/ToastOptions"
 
 const Login = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
   const navigate = useNavigate()
-  const toastOptions = {
-    position: "top-center",
-    autoClose: 3000,
-    hideProgressBar: true,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "dark",
-  }
 
   // Redirects from login to home page if the user has an auth token in session storage
   useEffect(() => {
@@ -56,14 +47,13 @@ const Login = () => {
       .then((res) => {
         console.log(res)
         if (res.ok) {
-          toast.success("Login successful", toastOptions)
+          toast.success("Login successful", ToastOptions)
           sessionStorage.setItem("AuthToken", res.token)
           sessionStorage.setItem("LocalID", res.id)
           navigate("/home")
         } else {
           // Convert this to toast
-          toast.error(res.ErrorMessage, toastOptions)
-          console.log(res.ErrorMessage)
+          toast.error(res.ErrorMessage, ToastOptions)
         }
       })
   }
@@ -98,6 +88,7 @@ const Login = () => {
             />
             <TextField
               label="Password"
+              type="password"
               variant="outlined"
               sx={{
                 my: 2,

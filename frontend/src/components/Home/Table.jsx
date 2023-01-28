@@ -9,10 +9,11 @@ import CheckIcon from "@mui/icons-material/Check"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import { useState, useEffect } from "react"
-import { Button, Container, TextField } from "@mui/material"
+import { Button, Container, TextField, Typography } from "@mui/material"
 import { toast } from "react-toastify"
 import PostDialogForm from "./PostDialogForm"
 import validateItem from "../../Util/InputValidation"
+import ToastOptions from "../../Util/ToastOptions"
 
 const ComponentTable = ({ data, postItem, updateItem, deleteItem }) => {
   const [currentlyEditing, setCurrentlyEditing] = useState(null)
@@ -53,9 +54,9 @@ const ComponentTable = ({ data, postItem, updateItem, deleteItem }) => {
     if (isValid != false) {
       const isSuccess = await updateItem(currentItem, userId)
       if (!isSuccess) {
-        toast.error(errorString)
+        toast.error(errorString, ToastOptions)
       } else {
-        toast.success("Item successfully updated")
+        toast.success("Item successfully updated", ToastOptions)
         setCurrentlyEditing(null)
       }
     }
@@ -65,14 +66,17 @@ const ComponentTable = ({ data, postItem, updateItem, deleteItem }) => {
     console.log(item)
     const isSuccess = await deleteItem(item, userId)
     if (isSuccess) {
-      toast.success("Item sucessfully deleted")
+      toast.success("Item sucessfully deleted", ToastOptions)
     } else {
-      toast.error(errorString)
+      toast.error(errorString, ToastOptions)
     }
   }
 
   return (
     <TableContainer component={Paper}>
+      <Typography variant="h3" sx={{ width: "100%", textAlign: "center" }}>
+        Component List
+      </Typography>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -83,10 +87,7 @@ const ComponentTable = ({ data, postItem, updateItem, deleteItem }) => {
         </TableHead>
         <TableBody>
           {copy.map((row) => (
-            <TableRow
-              key={row._id}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
+            <TableRow key={row._id}>
               {row._id === currentlyEditing ? (
                 <>
                   {fields.map((field) => {
@@ -145,7 +146,12 @@ const ComponentTable = ({ data, postItem, updateItem, deleteItem }) => {
         >
           Add Component
         </Button>
-        <Button variant="contained" color="error" sx={{ mx: 2 }}>
+        <Button
+          variant="contained"
+          color="error"
+          sx={{ mx: 2 }}
+          onClick={() => submitDelete(null)}
+        >
           Clear All
         </Button>
       </Container>

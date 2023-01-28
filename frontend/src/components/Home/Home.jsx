@@ -1,28 +1,17 @@
-import { Button } from "@mui/material"
+import { Button, Container, Paper, Typography, Box } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import "../../styles/Home.css"
 import ComponentTable from "./Table"
 import "react-toastify/dist/ReactToastify.css"
 import { ToastContainer } from "react-toastify"
+import LogoutIcon from "@mui/icons-material/Logout"
 
 const Home = () => {
   const navigate = useNavigate()
   const [items, setItems] = useState([])
   let token
   let id
-  const toastOptions = {
-    position: "top-center",
-    autoClose: 3000,
-    hideProgressBar: true,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "dark",
-  }
-
-  console.log("items", items)
 
   useEffect(() => {
     token = sessionStorage.getItem("AuthToken")
@@ -36,7 +25,7 @@ const Home = () => {
 
   const getItems = async () => {
     id = sessionStorage.getItem("LocalID")
-    fetch(`/api/items?id=${id}`)
+    await fetch(`/api/items?id=${id}`)
       .then((res) => res.json())
       .then((res) => setItems(res))
   }
@@ -50,11 +39,8 @@ const Home = () => {
       body: JSON.stringify({ item }),
     }
 
-    const result = fetch(`/api/items?id=${id}`, options).then((res) => {
+    const result = await fetch(`/api/items?id=${id}`, options).then((res) => {
       if (res.ok) {
-        const newItems = [...items]
-        newItems.push(item)
-        setItems(newItems)
         return true
       }
       return false
@@ -102,7 +88,11 @@ const Home = () => {
     const result = await fetch(`/api/items?id=${id}`, options).then(
       async (res) => {
         if (res.ok) {
-          setItems((array) => array.filter((row) => row._id != item._id))
+          if (item != null) {
+            setItems((array) => array.filter((row) => row._id != item._id))
+            return true
+          }
+          setItems([])
           return true
         }
         return false
@@ -120,21 +110,63 @@ const Home = () => {
   return (
     <div className="background">
       <ToastContainer style={{ width: "500px", textAlign: "center" }} />
-      <p style={{ marginTop: 0 }}>Home page </p>
-      {items.map((item) => {
-        return <p>{item.name}</p>
-      })}
-      {items.length > 0 && (
+      <Paper
+        elevation={24}
+        sx={{
+          borderRadius: 0,
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography variant="h2" sx={{ flexBasis: "33%" }}>
+          Seafarers
+        </Typography>
+        <Typography
+          variant="h3"
+          sx={{
+            display: "inline-block",
+            my: "auto",
+            flexBasis: "33%",
+            textAlign: "center",
+          }}
+        >
+          COM Calculator
+        </Typography>
+        <Box
+          style={{
+            flexBasis: "33%",
+            display: "flex",
+            justifyContent: "right",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            onClick={() => logoutHandler()}
+            sx={{
+              borderRadius: 0,
+              height: "100%",
+              ":hover": { backgroundColor: "darkBlue", color: "white" },
+            }}
+            endIcon={<LogoutIcon />}
+          ></Button>
+        </Box>
+      </Paper>
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          justifyContent: "center",
+        }}
+      >
         <ComponentTable
           data={items}
           postItem={postRequest}
           updateItem={putRequest}
           deleteItem={deleteRequest}
         />
-      )}
-      <Button varaint="contained" onClick={() => logoutHandler()}>
-        Logout
-      </Button>
+      </Container>
     </div>
   )
 }
