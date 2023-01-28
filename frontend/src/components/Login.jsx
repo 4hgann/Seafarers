@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom"
 import "react-toastify/dist/ReactToastify.css"
 import "../styles/Login.css"
 import ToastOptions from "../Util/ToastOptions"
+import Logo from "./Home/Logo"
 
 const Login = () => {
   const [username, setUsername] = useState("")
@@ -72,7 +73,7 @@ const Login = () => {
       >
         <Paper elevation={10} sx={{ minHeight: "50vh" }}>
           <Container sx={{ pt: "20px", pb: 0, textAlign: "center" }}>
-            <Typography variant="h3">Seafarers</Typography>
+            <Logo />
           </Container>
           <Container
             sx={{ display: "flex", flexDirection: "column", mt: "25px" }}
@@ -81,7 +82,7 @@ const Login = () => {
               label="Username"
               variant="outlined"
               sx={{
-                my: 2,
+                my: "5%",
               }}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -91,7 +92,7 @@ const Login = () => {
               type="password"
               variant="outlined"
               sx={{
-                my: 2,
+                my: "6%",
               }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -102,7 +103,7 @@ const Login = () => {
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
-              my: 3,
+              my: "5%",
             }}
           >
             <Button

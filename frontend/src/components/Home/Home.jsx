@@ -6,6 +6,7 @@ import ComponentTable from "./Table"
 import "react-toastify/dist/ReactToastify.css"
 import { ToastContainer } from "react-toastify"
 import LogoutIcon from "@mui/icons-material/Logout"
+import Logo from "./Logo"
 
 const Home = () => {
   const navigate = useNavigate()
@@ -119,20 +120,20 @@ const Home = () => {
           justifyContent: "space-between",
         }}
       >
-        <Typography variant="h2" sx={{ flexBasis: "33%" }}>
-          Seafarers
-        </Typography>
-        <Typography
-          variant="h3"
-          sx={{
+        <div style={{ flexBasis: "33%" }}>
+          <Logo direction="row" />
+        </div>
+        <h1
+          class="title"
+          style={{
             display: "inline-block",
             my: "auto",
             flexBasis: "33%",
             textAlign: "center",
           }}
         >
-          COM Calculator
-        </Typography>
+          Center Of Mass Calculator
+        </h1>
         <Box
           style={{
             flexBasis: "33%",

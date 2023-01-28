@@ -1,3 +1,8 @@
 .background {
   background-image: url("https://images.pexels.com/photos/611328/pexels-photo-611328.jpeg");
 }
+
+.logo,
+.title {
+  font-size: 28pt;
+}
