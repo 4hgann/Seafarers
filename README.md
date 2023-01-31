@@ -1,5 +1,6 @@
 # Seafarers
-
+![Login](https://user-images.githubusercontent.com/75669360/215633304-6d8fd351-63b7-454d-a366-4c6fc6a2aa51.png)
+![Home Page](https://user-images.githubusercontent.com/75669360/215633262-9633b970-edce-48d3-ad98-956e47a5d0c1.png)
 ## Introduction
 
 In 2022, I was given a task as an assignment for a company that I applied to. It was a fairly simple concept - create a website that functions as a Center of Mass calculator.
@@ -13,7 +14,7 @@ The list of requirements were fairly simple:
 
 A year since, this project is a recreation of that task with the skills that I have learned since. I will not be uploading my Firebase credentials for obvious reasons, so you will not be able to run my app unless I am working with you. So I have provided a demonstration below.
 
-##[DEMONSTRATION](https://youtu.be/rSoLfdylkZU)
+## [DEMONSTRATION](https://youtu.be/rSoLfdylkZU)
 
 ## Instructions
 
