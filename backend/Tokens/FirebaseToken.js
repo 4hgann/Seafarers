@@ -1,1 +1,0 @@
-export default "AIzaSyAtgZOLElW5OCmER40wsZWE0kEWHV230To"
