@@ -8,7 +8,6 @@ import ErrorMessageMap from "../../Firebase/ErrorMessageMap.js"
 const router = express.Router()
 
 router.post("/", async (req, res) => {
-  console.log(req.body)
   await createUserWithEmailAndPassword(
     auth,
     req.body.username,

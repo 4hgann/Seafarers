@@ -5,7 +5,7 @@ const Logo = ({ direction }) => {
   return (
     <div style={style}>
       <img src={logoSrc} style={{ height: "50px", margin: "auto 20px" }} />
-      <h1 class="logo">
+      <h1 className="logo">
         <i>Seafarers</i>
       </h1>
     </div>

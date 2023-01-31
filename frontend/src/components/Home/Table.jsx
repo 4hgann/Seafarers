@@ -20,6 +20,26 @@ const ComponentTable = ({ data, postItem, updateItem, deleteItem }) => {
   const [copy, setCopy] = useState([...data])
   const [showDialog, setShowDialog] = useState(false)
 
+  const COM = { x: 0, y: 0, z: 0 }
+
+  const totalMass =
+    data.length > 0
+      ? data.reduce((previous, current) => previous + Number(current.mass), 0)
+      : 1
+  console.log(totalMass)
+
+  data.map((row) => {
+    COM.x += row.mass * row.x
+    COM.y += row.mass * row.y
+    COM.z += row.mass * row.z
+  })
+
+  COM.x = Math.round((COM.x / totalMass) * 100) / 100
+  COM.y = Math.round((COM.y / totalMass) * 100) / 100
+  COM.z = Math.round((COM.z / totalMass) * 100) / 100
+
+  console.log(COM)
+
   const userId = sessionStorage.getItem("LocalID")
 
   useEffect(() => {
@@ -74,9 +94,11 @@ const ComponentTable = ({ data, postItem, updateItem, deleteItem }) => {
 
   return (
     <TableContainer component={Paper}>
-      <Typography variant="h3" sx={{ width: "100%", textAlign: "center" }}>
-        Component List
-      </Typography>
+      <Container sx={{ textAlign: "center" }}>
+        <h1 class="logo">
+          Current Center of Mass: {`(${COM.x}, ${COM.y}, ${COM.z})`}
+        </h1>
+      </Container>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -86,47 +108,57 @@ const ComponentTable = ({ data, postItem, updateItem, deleteItem }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {copy.map((row) => (
-            <TableRow key={row._id}>
-              {row._id === currentlyEditing ? (
-                <>
-                  {fields.map((field) => {
-                    const copyRow = copy.find((item) => item._id === row._id)
-                    return (
-                      <TableCell align="center" sx={{ width: "14%" }}>
-                        <TextField
-                          value={copyRow[field]}
-                          onChange={(e) =>
-                            handleEdit(row._id, field, e.target.value)
-                          }
-                        />
-                      </TableCell>
-                    )
-                  })}
-                </>
-              ) : (
-                <>
-                  {fields.map((field) => {
-                    return (
-                      <TableCell align="center" sx={{ width: "14%" }}>
-                        {row[field]}
-                      </TableCell>
-                    )
-                  })}
-                </>
-              )}
-              <TableCell align="center">
+          {data.length > 0 ? (
+            copy.map((row) => (
+              <TableRow key={row._id}>
                 {row._id === currentlyEditing ? (
-                  <CheckIcon onClick={() => submitEdit(row._id)} />
+                  <>
+                    {fields.map((field) => {
+                      const copyRow = copy.find((item) => item._id === row._id)
+                      return (
+                        <TableCell align="center" sx={{ width: "14%" }}>
+                          <TextField
+                            value={copyRow[field]}
+                            onChange={(e) =>
+                              handleEdit(row._id, field, e.target.value)
+                            }
+                          />
+                        </TableCell>
+                      )
+                    })}
+                  </>
                 ) : (
-                  <EditIcon onClick={() => setCurrentlyEditing(row._id)} />
+                  <>
+                    {fields.map((field) => {
+                      return (
+                        <TableCell align="center" sx={{ width: "14%" }}>
+                          {row[field]}
+                        </TableCell>
+                      )
+                    })}
+                  </>
                 )}
-              </TableCell>
-              <TableCell align="center">
-                <DeleteIcon onClick={() => submitDelete(row)} />
+                <TableCell align="center">
+                  {row._id === currentlyEditing ? (
+                    <CheckIcon onClick={() => submitEdit(row._id)} />
+                  ) : (
+                    <EditIcon onClick={() => setCurrentlyEditing(row._id)} />
+                  )}
+                </TableCell>
+                <TableCell align="center">
+                  <DeleteIcon onClick={() => submitDelete(row)} />
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={7}>
+                <h3 className="tableText" style={{ textAlign: "center" }}>
+                  Nothing here! Try adding an item using the button below.
+                </h3>
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
       <Container

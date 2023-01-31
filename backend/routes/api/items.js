@@ -53,7 +53,7 @@ router.put("/", async (req, res) => {
   if (index === -1) {
     res.sendStatus(StatusCodes.NOT_FOUND)
   } else {
-    items[index].name = "putTest"
+    items[index] = item
     await updateDoc(docRef, { items: items })
     res.sendStatus(StatusCodes.NO_CONTENT)
   }
@@ -67,7 +67,7 @@ router.delete("/", async (req, res) => {
   if (item) {
     const isExisting = await itemExists(id, item)
     if (isExisting) {
-      const test = await updateDoc(docRef, {
+      await updateDoc(docRef, {
         items: arrayRemove(req.body.item),
       })
       res.sendStatus(StatusCodes.NO_CONTENT)

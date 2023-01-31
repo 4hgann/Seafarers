@@ -7,7 +7,8 @@ import DialogContentText from "@mui/material/DialogContentText"
 import DialogTitle from "@mui/material/DialogTitle"
 import { Typography } from "@mui/material"
 import { useState } from "react"
-import validateItem from "../../Util/InputValidation"
+import ToastOptions from "../../Util/ToastOptions"
+import { toast } from "react-toastify"
 
 export default function PostDialogForm({ open, setOpen, postItem }) {
   const [data, setData] = useState({
@@ -31,9 +32,9 @@ export default function PostDialogForm({ open, setOpen, postItem }) {
 
   const handleSubmit = async () => {
     const result = await postItem(data, id)
-    console.log("post", result)
     if (result === true) {
       handleClose()
+      toast.success("Item sucessfully added", ToastOptions)
     }
   }
 
