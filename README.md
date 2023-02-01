@@ -12,7 +12,7 @@ The list of requirements were fairly simple:
 - State doesn't have to be persisted, i.e. A refresh can clear all items
 - Any other functionality e.g. editing is optional
 
-A year since, this project is a recreation of that task with the skills that I have learned since. I have provided a demonstration below.
+A year since, this project is a recreation of that task with the skills that I have learned since. I have provided a demonstration below. If you would like to run the project yourself, please contact me and I can provide you with an API key.
 
 ## [DEMONSTRATION](https://youtu.be/rSoLfdylkZU)
 
